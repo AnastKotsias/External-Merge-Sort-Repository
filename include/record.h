@@ -3,9 +3,9 @@
 
 
 typedef struct Record {
-  	char name[15];
-	char surname[15];
-	char city[15];
+  	char name[20];			// increased the size a little bit
+	char surname[20];
+	char city[20];
 	int id;	
 	char delimiter[2];
 } Record;

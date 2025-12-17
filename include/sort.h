@@ -14,4 +14,7 @@ void sort_FileInChunks(int file_desc, int numBlocksInChunk);
 /* Sorts records within a CHUNK in ascending order based on the name and surname of each person. */
 void sort_Chunk(CHUNK* chunk);
 
+/* Performs external sorting on a file, using the specified chunk size and merge way. */
+void external_Sort(char *filename, int numBlocksInChunk, int bWay);
+
 #endif 

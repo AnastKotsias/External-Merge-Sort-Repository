@@ -3,7 +3,7 @@
 #include <string.h>
 #include "merge.h"
 
-#define RECORDS_NUM 500 // you can change it if you want
+#define RECORDS_NUM 50 // you can change it if you want
 #define FILE_NAME "data.db"
 #define OUT_NAME "out"
 
@@ -25,8 +25,26 @@ int main() {
   //
   BF_Init(LRU);
   int file_desc = createAndPopulateHeapFile(FILE_NAME);
+
+  HP_PrintAllEntries(file_desc); 
+
+  printf("\n--- Starting Sort Phase ---\n");
   sortPhase(file_desc,chunkSize);
+  printf("\n--- Starting Merge Phase ---\n");
   mergePhases(file_desc,chunkSize,bWay,&fileIterator);
+
+  char finalFileName[50];
+  sprintf(finalFileName, "out%d.db", fileIterator - 1);
+  int final_fd;
+  HP_OpenFile(finalFileName, &final_fd);
+    
+  printf("\n--- Final Sorted File Content ---\n");
+  HP_PrintAllEntries(final_fd);
+    
+  HP_CloseFile(final_fd);
+  BF_Close();
+
+  return 0;
 }
 
 int createAndPopulateHeapFile(char* filename){
