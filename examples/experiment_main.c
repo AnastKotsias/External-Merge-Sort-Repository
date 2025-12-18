@@ -15,7 +15,7 @@ void run_experiment(int blocksInChunk, int bWay) {
     remove("temp_pass_1.db");
     remove("temp_pass_2.db");
     
-    // 1. Create and fill file with 1000 records
+    // 1. Create and fill file with TEST_RECORDS records
     HP_CreateFile(name);
     int fd;
     HP_OpenFile(name, &fd);
