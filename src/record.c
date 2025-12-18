@@ -46,6 +46,7 @@ static int id = 0;
 
 Record randomRecord(){
     Record record;
+    memset(&record, 0, sizeof(Record));  // Initialize all bytes to 0
     // create a record
     record.id = id++;
     int r = rand() % 100;
@@ -54,7 +55,7 @@ Record randomRecord(){
     memcpy(record.surname, surnames[r], strlen(surnames[r]) + 1);
     r = rand() % 50;
     memcpy(record.city, cities[r], strlen(cities[r]) + 1);
-    memcpy(record.delimiter, "\n", strlen("\n") + 1);
+    // memcpy(record.delimiter, "\n", strlen("\n") + 1);
     return record;
 }
 

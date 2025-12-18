@@ -64,46 +64,65 @@ void sort_FileInChunks(int file_desc, int numBlocksInChunk) {
 
 void external_Sort(char* input_FileName, int numBlocksInChunk, int bway) {
     int file_desc;
-    if (HP_OpenFile(input_FileName, &file_desc) != 0) return;
-
-    // PASS 0: In-place sorting of chunks
-    sort_FileInChunks(file_desc, numBlocksInChunk);
-    HP_CloseFile(file_desc);
-
-    int current_ChunkSize = numBlocksInChunk;
-    int pass_count = 1;
+    int total_blocks;
+    int pass_count;
+    int current_ChunkSize;
     char current_Input[256];
     char current_Output[256];
+
+    if (HP_OpenFile(input_FileName, &file_desc) != 0) return;
+
+    // PASS 0: Initial in-place sorting of chunks
+    sort_FileInChunks(file_desc, numBlocksInChunk);
     
+    // Data blocks are identified from 1 to last_block; thus last_block is the count 
+    total_blocks = HP_GetIdOfLastBlock(file_desc);
+    HP_CloseFile(file_desc);
+
+    pass_count = 1; // Start counting with Pass 0
+    current_ChunkSize = numBlocksInChunk;
+
+    // If Pass 0 sorted the entire file (1 chunk), we are done.
+    if (current_ChunkSize >= total_blocks) {
+        printf("Sorting complete after %d pass(es).\n", pass_count);
+        return;
+    }
+
     strcpy(current_Input, input_FileName);
 
-    while (true) {
+    // Merge passes continue as long as the current chunk size is less than the total file size
+    while (current_ChunkSize < total_blocks) {
         int in_fd;
-        if (HP_OpenFile(current_Input, &in_fd) != 0) break;
-        
-        int last_block = HP_GetIdOfLastBlock(in_fd);
-        if (current_ChunkSize >= last_block) {
-            HP_CloseFile(in_fd);
-            printf("Sorting complete after %d passes.\n", pass_count - 1);
-            break;
-        }
+        int out_fd;
 
-        sprintf(current_Output, "temp_pass_%d.db", pass_count);
+        if (HP_OpenFile(current_Input, &in_fd) != 0) break;
+
+        sprintf(current_Output, "temp_pass_%d.db", pass_count); 
         HP_CreateFile(current_Output);
         
-        int out_fd;
         if (HP_OpenFile(current_Output, &out_fd) != 0) {
             HP_CloseFile(in_fd);
             break;
         }
 
+        // Perform the merge
         merge(in_fd, current_ChunkSize, bway, out_fd);
 
         HP_CloseFile(in_fd);
         HP_CloseFile(out_fd);
 
+        // FIX (Issue 1): Delete the previous intermediate file if it's not the original
+        if (strcmp(current_Input, input_FileName) != 0) {
+            remove(current_Input);
+        }
+
         strcpy(current_Input, current_Output);
         current_ChunkSize *= bway; 
-        pass_count++;
+        pass_count++; 
+
+        // Termination Check: If the newly merged chunks now cover the whole file
+        if (current_ChunkSize >= total_blocks) break;
     }
+
+    printf("Sorting complete after %d passes.\n", pass_count);
 }

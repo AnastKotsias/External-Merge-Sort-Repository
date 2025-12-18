@@ -3,6 +3,7 @@
 #include <string.h>
 #include "chunk.h"
 #include "hp_file.h"
+#include "record.h"
 
 CHUNK_Iterator CHUNK_CreateIterator(int fileDesc, int blocksInChunk) {
     CHUNK_Iterator iterator;
@@ -75,6 +76,15 @@ int CHUNK_UpdateIthRecord(CHUNK* chunk, int i, Record record) {
         return 0;
     }
     return -1;
+}
+
+void CHUNK_Print(CHUNK chunk) {
+    CHUNK_RecordIterator it = CHUNK_CreateRecordIterator(&chunk);
+    Record rec;
+    printf("--- Chunk [Blocks %d - %d] ---\n", chunk.from_BlockId, chunk.to_BlockId);
+    while (CHUNK_GetNextRecord(&it, &rec) == 0) {
+        printRecord(rec);
+    }
 }
 
 CHUNK_RecordIterator CHUNK_CreateRecordIterator(CHUNK *chunk) {

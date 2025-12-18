@@ -21,8 +21,13 @@ int nextOutputFile(int* fileCounter);
 int main() {
   int chunkSize=5;
   int bWay= 4;
-  int fileIterator;
-  //
+  int fileIterator = 0;
+
+  remove(FILE_NAME);
+  if (system("rm -f out*.db temp_pass_*.db") == -1) {
+      perror("Cleanup failed");
+  }
+  // Initialize buffer pool
   BF_Init(LRU);
   int file_desc = createAndPopulateHeapFile(FILE_NAME);
 
