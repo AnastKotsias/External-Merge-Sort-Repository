@@ -1,3 +1,6 @@
+all: sort experiment test_chunk
+	@echo "All main programs built."
+
 sort:
 	@echo " Compile sort_main ...";
 	gcc -g -I ./include/ -L ./lib/ -Wl,-rpath,./lib/ ./examples/sort_main.c ./src/record.c ./src/sort.c ./src/merge.c ./src/chunk.c -lbf -lhp_file -o ./build/sort_main -O2
@@ -9,6 +12,8 @@ experiment:
 test_chunk:
 	@echo " Compile chunk_main ...";
 	gcc -g -I ./include/ -L ./lib/ -Wl,-rpath,./lib/ ./examples/chunk_main.c ./src/record.c ./src/chunk.c -lbf -lhp_file -o ./build/chunk_main
+
+test_chunk_run: test_chunk
 	@echo " Running chunk library test ...";
 	./build/chunk_main
 

@@ -12,8 +12,8 @@ void run_experiment(int blocksInChunk, int bWay) {
     
     // Clean up any leftover files
     remove(name);
-    remove("temp_pass_1.db");
-    remove("temp_pass_2.db");
+    // Remove all temp_pass_*.db files
+    system("rm -f temp_pass_*.db");
     
     // 1. Create and fill file with TEST_RECORDS records
     HP_CreateFile(name);
